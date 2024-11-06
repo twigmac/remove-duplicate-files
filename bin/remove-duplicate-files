@@ -1,0 +1,70 @@
+#!/usr/bin/env php
+<?php
+
+if (
+    PHP_MAJOR_VERSION < 8
+    || (PHP_MAJOR_VERSION === 8 && PHP_MINOR_VERSION < 2)
+) {
+    echo 'PHP 8.2 or higher required.' . PHP_EOL;
+    exit(1);
+}
+
+/**
+ * When used as a Composer package `__DIR__` represents
+ * `<project_dir>/vendor/twigmac/remove-duplicate-files/bin`, which makes the
+ * `/../../..` necessary to map to the project's vendor directory.
+ */
+
+$libModeAutoload = __DIR__ . '/../../../autoload.php';
+if (file_exists($libModeAutoload)) {
+    require $libModeAutoload;                    // used as a composer package
+} else {
+    require __DIR__ . '/../vendor/autoload.php'; // used standalone
+}
+
+use Twigmac\Cli\RemoveDuplicateFiles;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\SingleCommandApplication;
+
+$description = <<<'DESC'
+Given two directories, this script will recursively iterate through one
+  directory (`keepDir`) and for each found file it will try to find the same
+  file (including the relative path) in the other directory (`sweepDir`) and
+  remove it, if it has the same MD5 sum.
+DESC;
+
+(new SingleCommandApplication())
+    ->setName('Remove Duplicate Files (c) 2024 twigmac.')
+    ->setDescription($description)
+    ->addArgument(
+        'keepDir',
+        InputArgument::REQUIRED,
+        'The directory in which duplicates will be searched for and kept.'
+    )
+    ->addArgument(
+        'sweepDir',
+        InputArgument::REQUIRED,
+        'The directory in which files will be removed.'
+    )
+    ->addOption(
+        'limit',
+        'l',
+        InputOption::VALUE_OPTIONAL,
+        'The maximum number of files to delete, e.g. --limit=1000, (defaults to '
+        . RemoveDuplicateFiles::DEFAULT_LIMIT . ')'
+    )
+    ->addOption(
+        'really',
+        'r',
+        InputOption::VALUE_NONE,
+        'If not set, will execute a dry-run.'
+    )
+    ->addOption(
+        'force',
+        'f',
+        InputOption::VALUE_NONE,
+        'If not set, will ask for permission before removing any file.'
+    )
+    ->setCode([new RemoveDuplicateFiles, 'execute'])
+    ->run();

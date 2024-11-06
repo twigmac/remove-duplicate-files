@@ -1,0 +1,20 @@
+{
+    "name": "twigmac/remove-duplicate-files",
+    "description": "Recursively remove duplicate files on the command line. Includes a PHP binary.",
+    "authors": [
+        {
+            "name": "twigmac",
+            "email": "tratnaweera@yahoo.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"Twigmac\\Cli\\": "src/"}
+    },
+    "bin": ["bin/remove-duplicate-files"],
+    "require": {
+        "symfony/console": "^7"
+    },
+    "require-dev": {
+        "humbug/box": "^4.6"
+    }
+}
