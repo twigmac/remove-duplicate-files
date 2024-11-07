@@ -5,6 +5,7 @@ namespace Twigmac\Cli;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,12 +26,11 @@ class RemoveDuplicateFiles
     private int $limit = self::DEFAULT_LIMIT;
     private string $keepDir;
     private string $sweepDir;
-    private string $md5FileA;
-    private string $md5FileB;
+    private string $md5Sum;
     private InputInterface $input;
     private OutputInterface $output;
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->input = $input;
         $this->output = $output;
@@ -43,7 +43,7 @@ class RemoveDuplicateFiles
 
         if ($this->limit < 1) {
             $this->printMsg('Please select a limit greater than 0.', true);
-            return;
+            return Command::FAILURE;
         }
 
         $iterator = new RegexIterator(
@@ -61,7 +61,12 @@ class RemoveDuplicateFiles
             if (count($fileResult) > 1) {
                 $this->printLine();
                 $this->printMsg('More than one file. Please check:');
-                $this->printMsg(json_encode($fileResult));
+                $fileResultJson = json_encode($fileResult);
+                if (is_string($fileResultJson)) {
+                    $this->printMsg($fileResultJson);
+                } else {
+                    throw new \Exception('Unexpected error: 87c12cd6-10e4-4c82-a447-2753a0e777a6');
+                }
                 continue;
             }
 
@@ -91,7 +96,7 @@ class RemoveDuplicateFiles
                 }
 
                 $this->printLine();
-                $this->printMsg('Found identical files (MD5 ' . $this->md5FileB . ')');
+                $this->printMsg('Found identical files (MD5 ' . $this->md5Sum . ')');
                 $this->printMsg('(keep)   ' . $keepFile);
                 $this->printMsg('(delete) ' . $removeFile);
 
@@ -108,6 +113,8 @@ class RemoveDuplicateFiles
                 }
             }
         }
+
+        return Command::SUCCESS;
     }
 
     /**
@@ -118,11 +125,22 @@ class RemoveDuplicateFiles
     private function areIdentical(string $fileA, string $fileB): bool
     {
         if (!is_file($fileA) || !is_file($fileB)) {
-            return false;
+            throw new \Exception('Unexpected error: 9ce7e562-7636-433c-a7eb-83f34fed5c2e');
         }
-        $this->md5FileA = md5_file($fileA);
-        $this->md5FileB = md5_file($fileB);
-        return $this->md5FileA === $this->md5FileB;
+
+        $md5FileA = md5_file($fileA);
+        $md5FileB = md5_file($fileB);
+
+        if ($md5FileA === false || $md5FileB === false) {
+            throw new \Exception('Unexpected error: 80482b30-9340-4c7a-bc88-062a6f7fab16');
+        }
+
+        if ($md5FileA === $md5FileB) {
+            $this->md5Sum = $md5FileA;
+            return true;
+        }
+        $this->md5Sum = '<NOT_SET>';
+        return false;
     }
 
     private function askDelete(): bool
@@ -137,7 +155,7 @@ class RemoveDuplicateFiles
         return $answer === 'y' || $answer === 'yes';
     }
 
-    private function removeFile(string $aDirFile)
+    private function removeFile(string $aDirFile): void
     {
         if (unlink($aDirFile)) {
             $this->printMsg($aDirFile . ' removed.');
@@ -146,7 +164,7 @@ class RemoveDuplicateFiles
         }
     }
 
-    private function printLine()
+    private function printLine(): void
     {
         $this->output->writeln(
             '-----------------------------------------------------------------',
@@ -154,7 +172,7 @@ class RemoveDuplicateFiles
         );
     }
 
-    private function printMsg(string $msg = '', bool $force = false)
+    private function printMsg(string $msg = '', bool $force = false): void
     {
         if ($force) {
             $this->output->writeln($msg, OutputInterface::VERBOSITY_NORMAL);

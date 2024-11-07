@@ -1,0 +1,21 @@
+name: Remove Duplicate Files Build Action
+run-name: Build Remove Duplicate Files 🚧
+on: 
+ push:
+   branches:
+     - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: php-actions/composer@v6
+        with:
+          php_version: "8.2"
+      - name: Static analysis
+        uses: php-actions/phpstan@v3
+        with:
+          level: 8
+          php_version: "8.2"
+          path: src/

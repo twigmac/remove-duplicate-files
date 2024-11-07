@@ -15,6 +15,7 @@
         "symfony/console": "^7"
     },
     "require-dev": {
-        "humbug/box": "^4.6"
+        "humbug/box": "^4.6",
+        "phpstan/phpstan": "^1.12"
     }
 }

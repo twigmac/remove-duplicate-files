@@ -1,3 +1,5 @@
+![build status](https://github.com/twigmac/remove-duplicate-files/actions/workflows/build-workflow.yml/badge.svg) ![release status](https://github.com/twigmac/remove-duplicate-files/actions/workflows/release-workflow.yml/badge.svg)
+
 # Remove Duplicate Files
 
 Recursively find and remove duplicate files on the command line.
@@ -36,13 +38,13 @@ vendor/bin/remove-duplicate-files --help
 
 ```
 # This will find up to 100 duplicate files in the second directory but will not remove anything (dry-run).
-bin/remove-duplicate-files /home/example/Downloads/Photos /home/example/Backups/Photos
+bin/remove-duplicate-files --verbose /home/example/Downloads/Photos /home/example/Backups/Photos
 
 # This will remove up to 5000 duplicate files in the second directory and will keep them in the first directory
 # but it will ask you for permission before each file.
-bin/remove-duplicate-files --limit=5000 --really /home/example/Downloads/Photos /home/example/Backups/Photos
+bin/remove-duplicate-files --verbose --limit=5000 --really /home/example/Downloads/Photos /home/example/Backups/Photos
 
 # This will remove up to 5000 duplicate files in the second directory and will keep them in the first directory
 # without asking for permission.
-bin/remove-duplicate-files --limit=5000 --really --force /home/example/Downloads/Photos /home/example/Backups/Photos
+bin/remove-duplicate-files --verbose --limit=5000 --really --force /home/example/Downloads/Photos /home/example/Backups/Photos
 ```

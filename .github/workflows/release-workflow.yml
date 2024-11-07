@@ -1,0 +1,26 @@
+name: Remove Duplicate Files Release Action
+run-name: Release Remove Duplicate Files 🚀
+on: 
+ push:
+   tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: php-actions/composer@v6
+        with:
+          php_version: "8.2"
+      - name: Static analysis
+        uses: php-actions/phpstan@v3
+        with:
+          level: 8
+          php_version: "8.2"
+          path: src/
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "bin/remove-duplicate-files.phar"
