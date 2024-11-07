@@ -11,7 +11,7 @@
         "file", "helper", "cli", "console", "command line"
     ],
     "homepage": "https://github.com/twigmac/remove-duplicate-files",
-    "license": "GPLv3",
+    "license": "GPL-3.0+",
     "autoload": {
         "psr-4": {"Twigmac\\Cli\\": "src/"}
     },
