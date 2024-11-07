@@ -36,7 +36,7 @@ DESC;
 
 (new SingleCommandApplication())
     ->setName('Remove Duplicate Files (c) 2024 twigmac.')
-    ->setVersion('1.0.1')
+    ->setVersion('1.0.2')
     ->setDescription($description)
     ->addArgument(
         'keepDir',
